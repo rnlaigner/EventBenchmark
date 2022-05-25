@@ -32,8 +32,6 @@ namespace Client.UseCases.eShop
 
         private readonly IUseCaseConfig Config;
 
-        
-
         public EShopUseCase(IUseCaseConfig Config) : base()
         {
             this.Config = Config;
@@ -47,7 +45,7 @@ namespace Client.UseCases.eShop
         // orleans can used as reliable metadatada and configuration storage, as well as programming abstraction run...
         // some tasks are better off orleans?
 
-        public void Prepare()
+        public void Init()
         {
 
             CheckoutTransactionInput checkoutTransactionInput = new CheckoutTransactionInput
@@ -69,7 +67,6 @@ namespace Client.UseCases.eShop
                 Config.GetUrlMap()["basket"],
                 Config.GetUrlMap()["catalog"]
             };
-
 
             DataIngestor dataIngestor = new DataIngestor(httpClient);
 

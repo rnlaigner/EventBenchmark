@@ -25,5 +25,7 @@ namespace Client.UseCases.eShop
 
         Dictionary<string, string> GetUrlMap();
 
+        // 
+
     }
 }

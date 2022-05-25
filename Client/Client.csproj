@@ -18,6 +18,7 @@
     <None Remove="UseCases\eShop\Ingestion\" />
     <None Remove="UseCases\eShop\Workers\" />
     <None Remove="Infra\" />
+    <None Remove="UseCases\eShopOnDapr\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,5 +47,6 @@
     <Folder Include="UseCases\eShop\Data\" />
     <Folder Include="UseCases\eShop\Workers\" />
     <Folder Include="Infra\" />
+    <Folder Include="UseCases\eShopOnDapr\" />
   </ItemGroup>
 </Project>

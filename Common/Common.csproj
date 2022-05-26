@@ -12,7 +12,6 @@
     <None Remove="Configuration\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entities\eShop\" />
     <Folder Include="YCSB\" />
     <Folder Include="Http\" />
     <Folder Include="Configuration\" />

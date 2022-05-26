@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Client.UseCases.eShop
+namespace Client.UseCases
 {
     public static class Constants
     {

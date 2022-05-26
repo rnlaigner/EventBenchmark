@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Client.UseCases.eShop.TransactionInput;
-using Common.Entities.eShop;
+using Client.UseCases.eShopDapr.TransactionInput;
+using Common.Entities.eShopDapr;
 
-namespace Client.UseCases.eShop.Transactions
+namespace Client.UseCases.eShopDapr.Transactions
 {
     /**
      * This class models a user interacting with the webshop

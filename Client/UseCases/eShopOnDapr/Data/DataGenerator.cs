@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Entities.eShop;
+using Common;
+using Common.Entities.eShopDapr;
 
-namespace Client.UseCases.eShop
+namespace Client.UseCases.eShopDapr
 {
     public static class DataGenerator
     {
 
         const string numbers = "0123456789";
         const string alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        const int OFFSET = 0; // temporal during testing to not reinitialize application always
+        const int OFFSET = 0;
 
         public static List<CatalogItem> GenerateCatalogItems(int NumberOfItems)
         {
@@ -120,7 +121,7 @@ namespace Client.UseCases.eShop
                 user.CardExpiration = DateTime.Now.AddYears(10);
 
                 user.CardHolderName = RandomString(8, alphanumeric);
-                user.CardType = new Random().Next(1, 3);
+                user.CardType = new Random().Next(0, 2);
 
                 user.Street = RandomString(8, alphanumeric);
                 user.City = RandomString(8, alphanumeric);

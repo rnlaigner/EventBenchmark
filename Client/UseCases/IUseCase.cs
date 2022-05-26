@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Client.Configuration;
 
-namespace Client.UseCases.eShop
+namespace Client.UseCases
 {
     public interface IUseCaseConfig
     {

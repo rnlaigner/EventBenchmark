@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Common.Entities.eShop
+namespace Common.Entities.eShopDapr
 {
     public class ApplicationUser
     {
@@ -10,7 +10,7 @@ namespace Common.Entities.eShop
 
         [Required]
         public string SecurityNumber { get; set; }
-
+        
         [Required]
         public DateTime CardExpiration { get; set; }
 

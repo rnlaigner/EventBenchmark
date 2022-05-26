@@ -38,15 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\" />
-    <Folder Include="UseCases\eShop\" />
     <Folder Include="RabbitMQ\" />
     <Folder Include="UseCases\eShop\Transactions\" />
-    <Folder Include="UseCases\eShop\TransactionInput\" />
     <Folder Include="Configuration\" />
     <Folder Include="UseCases\eShop\Data\" />
     <Folder Include="UseCases\eShop\Workers\" />
     <Folder Include="Infra\" />
-    <Folder Include="UseCases\eShopOnDapr\" />
   </ItemGroup>
 </Project>

@@ -29,32 +29,58 @@ namespace Client.UseCases.eShop.Workers
         public void RunCatalog(string url, List<CatalogItem> items) {
             int n = items.Count;
             Task[] taskArray = new Task[n];
+            Console.WriteLine("Item");
             for (int i = 0; i < taskArray.Length; i++)
             {
                 HttpContent payload = new StringContent(JsonSerializer.Serialize(items[i]), System.Text.Encoding.UTF8, "application/json");
+                Console.WriteLine(JsonSerializer.Serialize(items[i]));
                 taskArray[i] = Task.Run(() => httpClient.PostAsync(new Uri(url), payload));
             }
-            Task.WaitAll(taskArray);
+            Console.WriteLine();
+            try
+            {
+                Task.WaitAll(taskArray);
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var ex in ae.InnerExceptions)
+                {
+                    Console.WriteLine("ERROR");
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         public void RunBasket(string url, List<string> basketIds, List<CatalogItem> catalogItems)
         {
             // will pick the items from the catalog
             // and create a basket which the user can use as his selection
+            int BASKET_ITEMS = 5;
             int n = basketIds.Count;
             Task[] taskArray = new Task[n];
+            Console.WriteLine("Basket");
             for (int i = 0; i < taskArray.Length; i++)
             {
                 CustomerBasket basket = new CustomerBasket();
                 basket.BuyerId = basketIds[i];
-                basket.Items = DataGenerator.GenerateBasketForExistingItems(5, catalogItems);
-                Console.WriteLine("Basket");
+                basket.Items = DataGenerator.GenerateBasketForExistingItems(BASKET_ITEMS, catalogItems);
                 Console.WriteLine(JsonSerializer.Serialize(basket));
-                Console.WriteLine("--------");
                 HttpContent payload = new StringContent(JsonSerializer.Serialize(basket), System.Text.Encoding.UTF8, "application/json");
                 taskArray[i] = Task.Run(() => httpClient.PostAsync(new Uri(url), payload));
             }
-            Task.WaitAll(taskArray);
+            Console.WriteLine("--------");
+            try
+            {
+                Task.WaitAll(taskArray);
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var ex in ae.InnerExceptions)
+                {
+                    Console.WriteLine("ERROR");
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

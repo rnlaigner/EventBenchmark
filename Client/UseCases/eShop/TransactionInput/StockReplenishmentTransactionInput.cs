@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Common.Entities.eShop;
 
+
 namespace Client.UseCases.eShop.TransactionInput
 {
-    public class PriceUpdateTransactionInput : IInput
+    public class StockReplenishmentTransactionInput : IInput
     {
 
         public int NumTotalItems { get; set; }
@@ -11,5 +12,6 @@ namespace Client.UseCases.eShop.TransactionInput
 
         // Filling data about the items present in the database
         public List<CatalogItem> Items { get; set; }
+
     }
 }

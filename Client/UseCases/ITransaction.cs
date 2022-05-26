@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Client.UseCases.eShop
+namespace Client.UseCases
 {
     public interface ITransaction
     {

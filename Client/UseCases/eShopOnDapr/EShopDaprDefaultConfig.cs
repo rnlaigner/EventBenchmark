@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Client.Configuration;
-using Client.UseCases.eShop.Transactions;
+using Client.UseCases.eShopDapr.Transactions;
 
-namespace Client.UseCases.eShop
+namespace Client.UseCases.eShopDapr
 {
-    public class EShopDefaultConfig : IUseCaseConfig
+    public class EShopDaprDefaultConfig : IUseCaseConfig
     {
 
         private const string BASKET_IP = "localhost:5103";
@@ -13,14 +13,15 @@ namespace Client.UseCases.eShop
         private const string ORDER_IP = "localhost:5102";
 
 
-        public EShopDefaultConfig() { }
+        public EShopDaprDefaultConfig() { }
 
         public List<string> GetTransactions()
         {
             return new List<string> { typeof(Checkout).Name, typeof(DeleteProduct).Name, typeof(PriceUpdate).Name, typeof(StockReplenishment).Name };
         }
 
-        public List<string> GetDistributionOfTransactions() { 
+        public List<string> GetDistributionOfTransactions()
+        {
             List<string> list = new List<string>();
             // list will have 10 elements and distribution will be as folowwing
             // 10 % delete

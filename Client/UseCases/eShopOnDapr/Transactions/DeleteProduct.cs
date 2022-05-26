@@ -2,10 +2,10 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Client.UseCases.eShop.TransactionInput;
+using Client.UseCases.eShopDapr.TransactionInput;
 using Common.YCSB;
 
-namespace Client.UseCases.eShop.Transactions
+namespace Client.UseCases.eShopDapr.Transactions
 {
     public class DeleteProduct
     {

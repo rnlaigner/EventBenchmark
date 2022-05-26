@@ -2,16 +2,16 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Client.UseCases.eShop.TransactionInput;
+using Client.UseCases.eShopDapr.TransactionInput;
 using Common.YCSB;
 
-namespace Client.UseCases.eShop.Transactions
+namespace Client.UseCases.eShopDapr.Transactions
 {
-    public class DeleteProduct
+    public class PriceUpdate
     {
 
         private readonly NumberGenerator numberGenerator;
-        private readonly DeleteProductTransactionInput input;
+        private readonly PriceUpdateTransactionInput input;
         private readonly HttpClient client;
 
         private readonly TimeSpan timeSpan;
@@ -19,7 +19,7 @@ namespace Client.UseCases.eShop.Transactions
 
         private readonly CountdownEvent cte;
 
-        public DeleteProduct(NumberGenerator numberGenerator, DeleteProductTransactionInput input)
+        public PriceUpdate(NumberGenerator numberGenerator, PriceUpdateTransactionInput input)
         {
             this.numberGenerator = numberGenerator;
             this.input = input;
@@ -28,7 +28,7 @@ namespace Client.UseCases.eShop.Transactions
             this.cte = new CountdownEvent(0);
         }
 
-        public DeleteProduct(NumberGenerator numberGenerator, DeleteProductTransactionInput input, TimeSpan timeSpan) : this(numberGenerator, input)
+        public PriceUpdate(NumberGenerator numberGenerator, PriceUpdateTransactionInput input, TimeSpan timeSpan) : this(numberGenerator, input)
         {
             this.timeSpan = timeSpan;
             this.Waitable = true;
@@ -47,13 +47,15 @@ namespace Client.UseCases.eShop.Transactions
 
                 int itemId = (int)numberGenerator.NextValue();
 
+                double newValue = random.NextDouble();
+
                 // TODO fix payload
                 HttpContent payload = null;
 
                 await client.PostAsync(input.CatalogUrl, payload);
 
 
-                if (Waitable) Thread.Sleep(timeSpan);
+                if (Waitable) await Task.Delay(timeSpan);
 
             }
 

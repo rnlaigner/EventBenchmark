@@ -5,10 +5,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Client.Configuration;
 using Client.Infra;
-using Client.UseCases.eShop.TransactionInput;
-using Client.UseCases.eShop.Transactions;
-using Client.UseCases.eShop.Workers;
-using Common.Entities.eShop;
+using Client.UseCases.eShopDapr.TransactionInput;
+using Client.UseCases.eShopDapr.Transactions;
+using Client.UseCases.eShopDapr.Workers;
+using Common.Entities.eShopDapr;
 using Common.YCSB;
 
 /**
@@ -26,14 +26,14 @@ using Common.YCSB;
      6 - setup event listeners (rabbit mq) given the config
  * 
  */
-namespace Client.UseCases.eShop
+namespace Client.UseCases.eShopDapr
 {
-    public class EShopUseCase : Stoppable
+    public class EShopDaprUseCase : Stoppable
     {
 
         private readonly IUseCaseConfig Config;
 
-        public EShopUseCase(IUseCaseConfig Config) : base()
+        public EShopDaprUseCase(IUseCaseConfig Config) : base()
         {
             this.Config = Config;
         }
@@ -125,12 +125,12 @@ namespace Client.UseCases.eShop
             int n = Config.GetTransactions().Count;
 
             // build and run all transaction tasks
-            int iterations = 10; // temporal during testing
-            while (iterations>0)
+
+            while (!IsStopped())
             {
-                iterations--;
+
                 int k = random.Next(0, n-1);
-                Console.WriteLine($"Round: {iterations}");
+                Console.WriteLine($"Random number k: {k}");
                 switch (Config.GetTransactions()[k])
                 {
 
@@ -175,18 +175,7 @@ namespace Client.UseCases.eShop
                             Console.WriteLine(client.DefaultRequestHeaders);
                             Console.WriteLine();
                             Task t = Task.Run(() => client.PostAsync(input.CartUrl, content));
-                            try
-                            {
-                                t.Wait();
-                            }
-                            catch (AggregateException ae)
-                            {
-                                foreach (var ex in ae.InnerExceptions)
-                                {
-                                    Console.WriteLine("ERROR");
-                                    Console.WriteLine(ex.Message);
-                                }
-                            }
+                            
                             // add to concurrent queue and check if error is too many requests, if so, send again later
                             //   this is to maintain the distribution
 
@@ -218,7 +207,7 @@ namespace Client.UseCases.eShop
                             PriceUpdate priceUpdate = new PriceUpdate(GetDistribution(), input);
 
                             CatalogItem payload = input.Items[new Random().Next(input.Items.Count)];
-                            payload.Price = Math.Ceiling((decimal)(new Random().NextDouble() * 10000)) / 100; ;
+                            payload.Price = (decimal)(new Random().NextDouble() * 100);
 
                             // now update price
                             Console.WriteLine();

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Common.Entities.eShop
 {
@@ -11,8 +12,7 @@ namespace Common.Entities.eShop
         public string SecurityNumber { get; set; }
 
         [Required]
-        [RegularExpression(@"(0[1-9]|1[0-2])\/[0-9]{2}", ErrorMessage = "Expiration should match a valid MM/YY value")]
-        public string Expiration { get; set; }
+        public DateTime CardExpiration { get; set; }
 
         [Required]
         public string CardHolderName { get; set; }

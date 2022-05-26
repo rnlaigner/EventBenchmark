@@ -23,7 +23,7 @@ namespace Client.UseCases.eShop
                     Id = i,
                     Name = RandomString(8, alphanumeric),
                     Description = RandomString(8, alphanumeric),
-                    Price = (decimal)numeric(0, 100, false),
+                    Price = (decimal)(new Random().NextDouble() * 100),
                     PictureFileName = "",
                     PictureUri = "",
                     CatalogTypeId = i,
@@ -42,18 +42,13 @@ namespace Client.UseCases.eShop
                         Brand = RandomString(8, alphanumeric)
                     },
 
-                    AvailableStock = (int)numeric(Constants.MIN_STOCK_QTY, Constants.MAX_STOCK_QTY, false),
+                    AvailableStock = new Random().Next(Constants.MIN_STOCK_QTY, Constants.MAX_STOCK_QTY),
                     RestockThreshold = Constants.MIN_STOCK_QTY,
                     MaxStockThreshold = Constants.MAX_STOCK_QTY,
                     OnReorder = false
 
 
                 };
-
-
-                //item.OldUnitPrice = item.UnitPrice;
-                //item.Quantity = numeric(10, false);
-                // item.PictureUrl = null;
 
                 items.Add(item);
 
@@ -62,7 +57,7 @@ namespace Client.UseCases.eShop
             return items;
         }
 
-        public static List<BasketItem> GenerateItems(int NumberOfItems)
+        public static List<BasketItem> GenerateBasketItems(int NumberOfItems)
         {
             List<BasketItem> items = new List<BasketItem>(NumberOfItems);
 
@@ -71,20 +66,43 @@ namespace Client.UseCases.eShop
 
                 BasketItem item = new BasketItem();
 
-                item.Id = i.ToString();
                 item.ProductId = i;
                 item.ProductName = RandomString(8, alphanumeric);
 
-                item.UnitPrice = (decimal)numeric(0, 100, false);
+                item.UnitPrice = (decimal)(new Random().NextDouble() * 100);
                 item.OldUnitPrice = item.UnitPrice;
-                item.Quantity = numeric(10, false);
-                // item.PictureUrl = null;
+                item.Quantity = 10; 
+                item.PictureUrl = "";
 
                 items.Add(item);
 
             }
 
             return items;
+        }
+
+        public static List<BasketItem> GenerateBasketForExistingItems(int NumberOfItems, List<CatalogItem> catalogItems)
+        {
+            List<BasketItem> basket = new List<BasketItem>(NumberOfItems);
+
+            for (int i = 0; i < NumberOfItems; i++)
+            {
+                CatalogItem catalogItem = catalogItems[new Random().Next(catalogItems.Count)];
+                BasketItem item = new BasketItem();
+
+                item.ProductId = catalogItem.Id;
+                item.ProductName = catalogItem.Name;
+
+                item.UnitPrice = catalogItem.Price;
+                item.OldUnitPrice = catalogItem.Price;
+                item.Quantity = new Random().Next(1,catalogItem.AvailableStock);
+                item.PictureUrl = null;
+
+                basket.Add(item);
+
+            }
+
+            return basket;
         }
 
         public static List<ApplicationUser> GenerateCustomers(int NumberOfCustomers)
@@ -98,10 +116,10 @@ namespace Client.UseCases.eShop
                 ApplicationUser user = new ApplicationUser();
                 user.CardNumber = RandomString(8, numbers);
                 user.SecurityNumber = RandomString(8, numbers);
-                user.Expiration = "10/28";
+                user.CardExpiration = DateTime.Now.AddYears(10);
 
                 user.CardHolderName = RandomString(8, alphanumeric);
-                user.CardType = numeric(2, false);
+                user.CardType = new Random().Next(0, 2);
 
                 user.Street = RandomString(8, alphanumeric);
                 user.City = RandomString(8, alphanumeric);
@@ -117,48 +135,20 @@ namespace Client.UseCases.eShop
 
             return users;
         }
-
-
+        
+        public static List<string> GenerateGuids(int numberOfIds) {
+            List<string> guids = new List<string>();
+            for (int i = 0; i < numberOfIds; i++) {
+                guids.Add(Guid.NewGuid().ToString());
+            }
+            return guids;
+        }
         private static string RandomString(int length, string chars)
         {
             var random = new Random();
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
-        private static int numeric(int m, bool signed)
-        {
-            var random = new Random();
-            var num = random.Next((int)Math.Pow(10, m), (int)Math.Pow(10, m + 1));
-            var isPositive = random.Next(0, 2);
-            if (signed && isPositive > 1) return -num;
-            else return num;
-        }
-
-        private static float numeric(int m, int n, bool signed)
-        {
-            float the_number;
-            var random = new Random();
-            var str = RandomString(m, numbers);
-            if (m == n) the_number = float.Parse("0." + str);
-            else if (m > n)
-            {
-                var left = str.Substring(0, m - n);
-                var right = str.Substring(m - n);
-                the_number = float.Parse(left + "." + right);
-            }
-            else
-            {
-                var left = "0.";
-                for (int i = 0; i < n - m; i++) left += "0";
-                the_number = float.Parse(left + str);
-            }
-            var isPositive = random.Next(0, 2);
-            if (signed && isPositive > 0) return -the_number;
-            return the_number;
-        }
-
-
 
     }
 }

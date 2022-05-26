@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Client.Configuration;
 using Client.Infra;
@@ -48,30 +49,29 @@ namespace Client.UseCases.eShop
         public void Init()
         {
 
+            List<ApplicationUser> customers =  DataGenerator.GenerateCustomers(Constants.CUST_PER_DIST);
+            List<CatalogItem> items = DataGenerator.GenerateCatalogItems(Constants.NUM_TOTAL_ITEMS);
+            List<string> customeBaskets = DataGenerator.GenerateGuids(Constants.CUST_PER_DIST);
+
             CheckoutTransactionInput checkoutTransactionInput = new CheckoutTransactionInput
             {
                 MinNumItems = Constants.MIN_NUM_ITEMS,
                 MaxNumItems = Constants.MAX_NUM_ITEMS,
                 MinItemQty = Constants.MIN_ITEM_QTY,
                 MaxItemQty = Constants.MAX_ITEM_QTY,
-                CartUrl = Config.GetUrlMap()["basket"]
+                CartUrl = Config.GetUrlMap()["checkout"],
+                Users = customers,
+                BasketIds = customeBaskets
             };
 
-            List<ApplicationUser> customers =  DataGenerator.GenerateCustomers(Constants.CUST_PER_DIST);
-            List<CatalogItem> items = DataGenerator.GenerateCatalogItems(Constants.NUM_TOTAL_ITEMS);
 
             HttpClient httpClient = new HttpClient();
-
-            List<string> urlList = new List<string>
-            {
-                Config.GetUrlMap()["basket"],
-                Config.GetUrlMap()["catalog"]
-            };
 
             DataIngestor dataIngestor = new DataIngestor(httpClient);
 
             // blocking call
-            dataIngestor.RunCatalog(Config.GetUrlMap()["catalog"], items);
+            //dataIngestor.RunCatalog(Config.GetUrlMap()["catalog"], items);
+            dataIngestor.RunBasket(Config.GetUrlMap()["basket"], customeBaskets, items);
 
             // TODO setup event listeners before submitting the transactions
 
@@ -119,38 +119,44 @@ namespace Client.UseCases.eShop
                             // keep added items to avoid repetition
                             Dictionary<int, string> usedItemIds = new Dictionary<int, string>();
 
-                            List<int> itemIds = new();
-
-                            List<int> itemQuantity = new();
 
                             userCount++;
 
-                            // constraint here: numberItems >= NUM_TOTAL_ITEMS
-                            for (int i = 0; i < numberItems; i++)
-                            {
-                                int itemId = (int)numberGenerator.NextValue();
+                            
 
-                                while (usedItemIds[itemId] == "")
+                            if (userCount < input.Users.Count)
+                            {
+                                Checkout checkout = new Checkout(client, input);
+                                var userId = userCount;
+                                var payload = new BasketCheckout()
                                 {
-                                    itemId = (int)numberGenerator.NextValue();
-                                }
+                                    City = input.Users[userId].City,
+                                    Street = input.Users[userId].Street,
+                                    Country = input.Users[userId].Country,
+                                    ZipCode = input.Users[userId].ZipCode,
+                                    CardNumber = input.Users[userId].CardNumber,
+                                    CardHolderName = input.Users[userId].CardHolderName,
+                                    CardExpiration = input.Users[userId].CardExpiration,
+                                    CardSecurityNumber = input.Users[userId].SecurityNumber,
+                                    CardTypeId = input.Users[userId].CardType,
+                                    Buyer = input.Users[userId].Name,
+                                    UserId = input.BasketIds[userId],
+                                };
 
-                                usedItemIds[itemId] = "";
+                                var content = new StringContent(JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
+                                client.DefaultRequestHeaders.Add("x-requestid", input.BasketIds[userId]);
 
-                                itemIds.Add(itemId);
-
-                                int qty = random.Next(input.MinItemQty, input.MaxItemQty);
-
-                                itemQuantity.Add(qty);
-
+                                // now checkout
+                                Console.WriteLine();
+                                Console.WriteLine("CHECKOUT");
+                                Console.WriteLine(content);
+                                Console.WriteLine();
+                                Task t = Task.Run(() => client.PostAsync(input.CartUrl, content));
+                                t.Wait();
                             }
-
-                            Checkout checkout = new Checkout(client, input);
-
-                            Task<HttpResponseMessage> res = Task.Run(async () =>
-                            {
-                                return await checkout.Run(userCount, itemIds, itemQuantity);
-                            });
+                            else {
+                                return;
+                            }
 
                             // add to concurrent queue and check if error is too many requests, if so, send again later
                             //   this is to maintain the distribution

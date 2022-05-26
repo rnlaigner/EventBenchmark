@@ -26,6 +26,9 @@ namespace Common.Entities.eShop
 
         public string Buyer { get; set; }
 
-        public Guid RequestId { get; set; }
+        // filled which was introduce as replacement of identity service
+        // not safe practice but workabel solution
+        // in the checkout user also shows which basket is his
+        public string UserId { get; set; }
     }
 }

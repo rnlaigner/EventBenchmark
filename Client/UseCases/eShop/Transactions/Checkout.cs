@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Client.UseCases.eShop.TransactionInput;
+using Common.Entities.eShop;
 
 namespace Client.UseCases.eShop.Transactions
 {
@@ -29,32 +30,30 @@ namespace Client.UseCases.eShop.Transactions
             this.Waitable = true;
         }
 
-        public async Task<HttpResponseMessage> Run(int userId, List<int> itemIds, List<int> itemQuantity)// only parameter not shared across input
+        public async Task<HttpResponseMessage> Run(int userId)// only parameter not shared across input
         {
 
-            // TODO adjust https://github.com/dotnet-architecture/eShopOnContainers/blob/59805331cd225fc876b9fc6eef3b0d82fda6bda1/src/Web/WebMVC/Infrastructure/API.cs#L17
+           //Task[] listWaitAddCart = new Task[1];
 
-            Task[] listWaitAddCart = new Task[itemIds.Count];
+           var payload = new BasketCheckout()  {
+                City = input.Users[userId].City,
+                Street = input.Users[userId].Street,
+                Country = input.Users[userId].Country,
+                ZipCode = input.Users[userId].ZipCode,
+                CardNumber = input.Users[userId].CardNumber,
+                CardHolderName = input.Users[userId].CardHolderName,
+                CardExpiration = input.Users[userId].CardExpiration,
+                CardSecurityNumber = input.Users[userId].SecurityNumber,
+                CardTypeId = input.Users[userId].CardType,
+                Buyer = input.Users[userId].Name,
+                UserId = input.BasketIds[userId],
+            };
 
-            for (int i = 0; i < itemIds.Count; i++)
-            {
-                int itemId = itemIds[i];
+            var content = new StringContent(JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
+            client.DefaultRequestHeaders.Add("x-requestid", input.BasketIds[userId]);
 
-                int qty = itemQuantity[i];
-
-                // https://github.com/dotnet-architecture/eShopOnContainers/blob/de90e6e198969eba8bb0a2590f87935aa06cd6ae/src/Web/WebMVC/Controllers/TestController.cs#L3
-                var payload = new TestPayload()
-                {
-                    CatalogItemId = itemId,
-                    Quantity = qty,
-                    BasketId = userId.ToString()
-                };
-
-                var content = new StringContent(JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
-
-                listWaitAddCart[i] = client.PostAsync(input.CartUrl, content);
-                if (Waitable) await Task.Delay(new TimeSpan(1000));
-            }
+            /*listWaitAddCart[0] = client.PostAsync(input.CartUrl, content);
+            if (Waitable) await Task.Delay(new TimeSpan(1000));
 
             // wait for all
             Task.WaitAll(listWaitAddCart);
@@ -62,20 +61,15 @@ namespace Client.UseCases.eShop.Transactions
             if (Waitable)
             {
                 await Task.Delay(new TimeSpan(10000));
-            }
+            }*/
 
             // now checkout
-            return await client.PostAsync(input.CartUrl, null);
+            Console.WriteLine();
+            Console.WriteLine("CHECKOUT");
+            Console.WriteLine(content);
+            Console.WriteLine();
+            return await client.PostAsync(input.CartUrl, content);
 
-        }
-
-        class TestPayload
-        {
-            public int CatalogItemId { get; set; }
-
-            public string BasketId { get; set; }
-
-            public int Quantity { get; set; }
         }
 
     }

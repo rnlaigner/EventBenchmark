@@ -62,7 +62,7 @@ namespace Client.UseCases.eShopDapr.Workers
             {
                 CustomerBasket basket = new CustomerBasket();
                 basket.BuyerId = basketIds[i];
-                basket.Items = DataGenerator.GenerateBasketForExistingItems(5, catalogItems);
+                basket.Items = DataGenerator.GenerateBasketForExistingItems(new Random().Next(Constants.MIN_NUM_ITEMS, Constants.MAX_NUM_ITEMS), catalogItems);
                 Console.WriteLine(JsonSerializer.Serialize(basket));
                 
                 HttpContent payload = new StringContent(JsonSerializer.Serialize(basket), System.Text.Encoding.UTF8, "application/json");

@@ -5,18 +5,18 @@ namespace Client.UseCases
     {
 
         // every cart/basket must have at least 5 items?
-        public const int MIN_NUM_ITEMS = 5;
-        public const int MAX_NUM_ITEMS = 9;//15;
+        public const int MIN_NUM_ITEMS = 1;
+        public const int MAX_NUM_ITEMS = 15;
 
         // every item in the cart must have at least 1 quantity
         public const int MIN_ITEM_QTY = 1;
         public const int MAX_ITEM_QTY = 10;
 
-        public const int NUM_TOTAL_ITEMS = 10; // 100000;
+        public const int NUM_TOTAL_ITEMS = 100; // 100000;
 
         public const int DIST_PER_WARE = 10;
-        public const int CUST_PER_DIST = 3; //3000;
-        public const int ORD_PER_DIST = 3;//3000;
+        public const int CUST_PER_DIST = 30; //3000;
+        public const int ORD_PER_DIST = 30;//3000;
 
         public const int DEFAULT_NUM_WARE = 1; //8;
 

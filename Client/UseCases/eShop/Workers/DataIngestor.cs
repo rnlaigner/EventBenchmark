@@ -55,7 +55,6 @@ namespace Client.UseCases.eShop.Workers
         {
             // will pick the items from the catalog
             // and create a basket which the user can use as his selection
-            int BASKET_ITEMS = 5;
             int n = basketIds.Count;
             Task[] taskArray = new Task[n];
             Console.WriteLine("Basket");
@@ -63,7 +62,7 @@ namespace Client.UseCases.eShop.Workers
             {
                 CustomerBasket basket = new CustomerBasket();
                 basket.BuyerId = basketIds[i];
-                basket.Items = DataGenerator.GenerateBasketForExistingItems(BASKET_ITEMS, catalogItems);
+                basket.Items = DataGenerator.GenerateBasketForExistingItems(new Random().Next(Constants.MIN_NUM_ITEMS, Constants.MAX_NUM_ITEMS), catalogItems);
                 Console.WriteLine(JsonSerializer.Serialize(basket));
                 HttpContent payload = new StringContent(JsonSerializer.Serialize(basket), System.Text.Encoding.UTF8, "application/json");
                 taskArray[i] = Task.Run(() => httpClient.PostAsync(new Uri(url), payload));

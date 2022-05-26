@@ -73,13 +73,13 @@ namespace Client.UseCases.eShopDapr
             
             // Catalog
             // POST
-            dictionary.Add("catalog", "http://" + CATALOG_IP + "/catalog-api/api/v1/Catalog/items");
+            dictionary.Add("catalog", "http://" + CATALOG_IP + "/api/v1/Catalog/items");
             // DELETE
-            dictionary.Add("delete", "http://" + CATALOG_IP + "/catalog-api/api/v1/Catalog/");
+            dictionary.Add("delete", "http://" + CATALOG_IP + "/api/v1/Catalog/");
             // PUT
-            dictionary.Add("update", "http://" + CATALOG_IP + "/catalog-api/api/v1/Catalog/items");
+            dictionary.Add("update", "http://" + CATALOG_IP + "/api/v1/Catalog/items");
             // PUT
-            dictionary.Add("replenishment", "http://" + CATALOG_IP + "/catalog-api/api/v1/Catalog/addStocks");
+            dictionary.Add("replenishment", "http://" + CATALOG_IP + "/api/v1/Catalog/addStocks");
 
 
             // Order

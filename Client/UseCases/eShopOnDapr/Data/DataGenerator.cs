@@ -24,16 +24,14 @@ namespace Client.UseCases.eShopDapr
                 {
                     Id = i,
                     Name = RandomString(8, alphanumeric),
-                    Description = RandomString(8, alphanumeric),
                     Price = Math.Ceiling((decimal)(new Random().NextDouble() * 10000)) / 100,
                     PictureFileName = "",
-                    PictureUri = "",
                     CatalogTypeId = i,
 
                     CatalogType = new CatalogType
                     {
                         Id = i,
-                        Type = RandomString(8, alphanumeric)
+                        Name = RandomString(8, alphanumeric)
                     },
 
                     CatalogBrandId = i,
@@ -41,15 +39,10 @@ namespace Client.UseCases.eShopDapr
                     CatalogBrand = new CatalogBrand
                     {
                         Id = i,
-                        Brand = RandomString(8, alphanumeric)
+                        Name = RandomString(8, alphanumeric)
                     },
 
                     AvailableStock = new Random().Next(Constants.MIN_STOCK_QTY, Constants.MAX_STOCK_QTY),
-                    RestockThreshold = Constants.MIN_STOCK_QTY,
-                    MaxStockThreshold = Constants.MAX_STOCK_QTY,
-                    OnReorder = false
-
-
                 };
 
                 items.Add(item);
@@ -72,9 +65,8 @@ namespace Client.UseCases.eShopDapr
                 item.ProductName = RandomString(8, alphanumeric);
 
                 item.UnitPrice = Math.Ceiling((decimal)(new Random().NextDouble() * 10000)) / 100;
-                item.OldUnitPrice = item.UnitPrice;
                 item.Quantity = 10; 
-                item.PictureUrl = "";
+                item.PictureFileName = "";
 
                 items.Add(item);
 
@@ -96,9 +88,8 @@ namespace Client.UseCases.eShopDapr
                 item.ProductName = catalogItem.Name;
 
                 item.UnitPrice = catalogItem.Price;
-                item.OldUnitPrice = catalogItem.Price;
                 item.Quantity = new Random().Next(1,catalogItem.AvailableStock);
-                item.PictureUrl = null;
+                item.PictureFileName = "";
 
                 basket.Add(item);
 
@@ -121,13 +112,11 @@ namespace Client.UseCases.eShopDapr
                 user.CardExpiration = DateTime.Now.AddYears(10);
 
                 user.CardHolderName = RandomString(8, alphanumeric);
-                user.CardType = new Random().Next(0, 2);
 
                 user.Street = RandomString(8, alphanumeric);
                 user.City = RandomString(8, alphanumeric);
                 user.State = RandomString(8, alphanumeric);
                 user.Country = RandomString(8, alphanumeric);
-                user.ZipCode = RandomString(8, numbers);
                 user.Name = RandomString(8, alphanumeric);
                 user.LastName = RandomString(8, alphanumeric);
 

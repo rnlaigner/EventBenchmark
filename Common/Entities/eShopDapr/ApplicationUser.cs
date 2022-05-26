@@ -17,8 +17,6 @@ namespace Common.Entities.eShopDapr
         [Required]
         public string CardHolderName { get; set; }
 
-        public int CardType { get; set; }
-
         [Required]
         public string Street { get; set; }
 
@@ -30,9 +28,6 @@ namespace Common.Entities.eShopDapr
 
         [Required]
         public string Country { get; set; }
-
-        [Required]
-        public string ZipCode { get; set; }
 
         [Required]
         public string Name { get; set; }

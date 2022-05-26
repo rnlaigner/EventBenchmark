@@ -37,14 +37,13 @@ namespace Client.UseCases.eShopDapr.Transactions
            var payload = new BasketCheckout()  {
                 City = input.Users[userId].City,
                 Street = input.Users[userId].Street,
+                State = input.Users[userId].State,
                 Country = input.Users[userId].Country,
-                ZipCode = input.Users[userId].ZipCode,
                 CardNumber = input.Users[userId].CardNumber,
                 CardHolderName = input.Users[userId].CardHolderName,
                 CardExpiration = input.Users[userId].CardExpiration,
-                CardSecurityNumber = input.Users[userId].SecurityNumber,
-                CardTypeId = input.Users[userId].CardType,
-                Buyer = input.Users[userId].Name,
+                CardSecurityCode = input.Users[userId].SecurityNumber,
+                UserEmail = input.Users[userId].Name,
                 UserId = input.BasketIds[userId],
             };
 

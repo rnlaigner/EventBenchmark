@@ -8,12 +8,12 @@ namespace Client
         public static int Main(string[] args)
         {
             // WHEN RUNNING CONTAINERS
-            //EShopUseCase eShopUseCase = new EShopUseCase(new EShopDefaultConfig());
-            //eShopUseCase.Init();
+            EShopUseCase eShopUseCase = new EShopUseCase(new EShopDefaultConfig());
+            eShopUseCase.Init();
 
             // WHEN RUNNING DAPR 
-            EShopDaprUseCase eShopDaprUseCase = new EShopDaprUseCase(new EShopDaprDefaultConfig());
-            eShopDaprUseCase.Init();
+            //EShopDaprUseCase eShopDaprUseCase = new EShopDaprUseCase(new EShopDaprDefaultConfig());
+            //eShopDaprUseCase.Init();
 
             return 0;
         }

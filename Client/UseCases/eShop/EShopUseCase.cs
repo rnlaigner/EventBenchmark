@@ -125,10 +125,10 @@ namespace Client.UseCases.eShop
             int n = Config.GetTransactions().Count;
 
             // build and run all transaction tasks
-            int iterations = 10; // temporal during testing
-            while (iterations>0)
+            int iterations = 0; // temporal during testing
+            while (!IsStopped())
             {
-                iterations--;
+                iterations++;
                 int k = random.Next(0, n-1);
                 Console.WriteLine($"Round: {iterations}");
                 switch (Config.GetTransactions()[k])

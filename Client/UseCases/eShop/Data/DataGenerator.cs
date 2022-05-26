@@ -115,8 +115,8 @@ namespace Client.UseCases.eShop
             {
 
                 ApplicationUser user = new ApplicationUser();
-                user.CardNumber = RandomString(8, numbers);
-                user.SecurityNumber = RandomString(8, numbers);
+                user.CardNumber = RandomString(16, numbers); // needs to be between 12 and 19
+                user.SecurityNumber = RandomString(3, numbers); // needs to have length 3
                 user.CardExpiration = DateTime.Now.AddYears(10);
 
                 user.CardHolderName = RandomString(8, alphanumeric);

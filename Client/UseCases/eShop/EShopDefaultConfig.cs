@@ -26,10 +26,11 @@ namespace Client.UseCases.eShop
 
             int total = checkout + delete + update + replenish;
             Console.WriteLine("Transactions:");
-            Console.WriteLine($"Checkout in {((double)checkout)/total} %");
-            Console.WriteLine($"Delete in {((double)delete) / total} %");
-            Console.WriteLine($"Update in {((double)update) / total} %");
-            Console.WriteLine($"Replenish in {((double)replenish) / total} %");
+            Console.WriteLine($"Checkout in {((double)checkout)/total} %, {checkout} of {total}");
+            Console.WriteLine($"Delete in {((double)delete) / total} %, {delete} of {total}");
+            Console.WriteLine($"Update in {((double)update) / total} %, {update} of {total}");
+            Console.WriteLine($"Replenish in {((double)replenish) / total} %, {replenish} of {total}");
+            Console.WriteLine("press any key to contine the process...");
             Console.ReadKey();
             List<string> list = new List<string>();
             for (int i = 0; i < delete; i++)

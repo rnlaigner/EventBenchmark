@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -49,11 +48,11 @@ namespace Client.UseCases.eShop
 
                 case Constants.REFERENTIAL_INTEGRITY:
                     {
-                        var items = 10;
-                        var customers = 10;
-                        var minItems = 10;
+                        var items = 100;
+                        var customers = 100;
+                        var minItems = 1;
                         var maxItems = 10;
-                        var minQuantityItems = 10;
+                        var minQuantityItems = 1;
                         var maxQuantityItems = 10;
                         Console.WriteLine($"items: {items}");
                         Console.WriteLine($"customers: {customers}");
@@ -82,7 +81,7 @@ namespace Client.UseCases.eShop
                         Console.WriteLine($"minQuantityItems: {minQuantityItems}");
                         Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 1, 0, 0, 0 };
+                        List<int> transactions = new List<int>() { 100, 0, 0, 0 };
                         runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
@@ -91,12 +90,12 @@ namespace Client.UseCases.eShop
                         // here need a specific case:
                         //    - a lot of same customer requests
                         //    - a normal execution where we see if the payment had multiple same processe
-                        var items = 10;
-                        var customers = 10;
-                        var minItems = 10;
+                        var items = 100;
+                        var customers = 50;
+                        var minItems = 1;
                         var maxItems = 10;
-                        var minQuantityItems = 10;
-                        var maxQuantityItems = 10;
+                        var minQuantityItems = 50;
+                        var maxQuantityItems = 200;
                         Console.WriteLine($"items: {items}");
                         Console.WriteLine($"customers: {customers}");
                         Console.WriteLine($"minItems: {minItems}");
@@ -104,19 +103,19 @@ namespace Client.UseCases.eShop
                         Console.WriteLine($"minQuantityItems: {minQuantityItems}");
                         Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 10, 0, 1, 1 };
+                        List<int> transactions = new List<int>() { 100, 0, 1, 1 };
                         runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
                 case Constants.PERFORMANCE:
                     {
                         // workload need to be differnt
-                        var items = 400;
-                        var customers = 1000;
+                        var items = 500;
+                        var customers = 50;
                         var minItems = 1;
-                        var maxItems = 100;
-                        var minQuantityItems = 1;
-                        var maxQuantityItems = 1000;
+                        var maxItems = 15;
+                        var minQuantityItems = 1000;
+                        var maxQuantityItems = 10000;
                         Console.WriteLine($"items: {items}");
                         Console.WriteLine($"customers: {customers}");
                         Console.WriteLine($"minItems: {minItems}");
@@ -124,13 +123,13 @@ namespace Client.UseCases.eShop
                         Console.WriteLine($"minQuantityItems: {minQuantityItems}");
                         Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 10, 1, 2, 1 };
+                        List<int> transactions = new List<int>() { 15, 0, 1, 4 };
                         runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
                 case Constants.SIMPLE_SUCESS_FLOW:
                     {
-                        var items = 1000;
+                        var items = 100;
                         var customers = 1;
                         var minItems = 1;
                         var maxItems = 10;
@@ -203,6 +202,7 @@ namespace Client.UseCases.eShop
 
             // now that data is stored, we can start the transacions
             Console.WriteLine("Starting the transaction. Verify that the baskets and items are in place.");
+            Console.WriteLine("press any key to contine the process...");
             Console.ReadKey();
 
             Dictionary<string, IInput> inputs = new Dictionary<string, IInput>();
@@ -250,6 +250,7 @@ namespace Client.UseCases.eShop
                             }
                             else {
                                 Console.WriteLine($"Duplicate request, {userId}");
+                                //break;
                             }
                             var payload = new BasketCheckout()
                             {
@@ -360,13 +361,21 @@ namespace Client.UseCases.eShop
                             break;
                         }
                 }
-
-                if (iterations % 100 == 0) {
-                    // give time for the system to process all
+                // used for the all other
+                if (iterations % 100 == 0)
+                {
                     var time = 1000;
                     Console.WriteLine($"Processing the requests, sleep for {time} ms");
                     Thread.Sleep(time);
                 }
+
+                // used for the last worflow
+                /*if (iterations % 50 == 0) {
+                    // give time for the system to process all
+                    var time = 3000;
+                    Console.WriteLine($"Processing the requests, sleep for {time} ms");
+                    Thread.Sleep(time);
+                }*/
                 // for simple case to see the succesful work
                 if (runOnce) {
                     break;

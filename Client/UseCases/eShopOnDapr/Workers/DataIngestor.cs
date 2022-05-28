@@ -14,17 +14,11 @@ namespace Client.UseCases.eShopDapr.Workers
     {
 
         private readonly HttpRequest httpRequest;
-        // http client in the http request
-        //private readonly HttpClient httpClient;
 
         // no setup if failers (just redo whole process or extend the thread time)
-        //private readonly Queue<KeyValuePair<string, HttpContent>> PendingRequests;
-        //private int _retries;
-
-        public DataIngestor(HttpRequest httpRequest) //HttpClient httpClient, 
+        public DataIngestor(HttpRequest httpRequest)
         {
             this.httpRequest = httpRequest;
-            //this.httpClient = httpClient;
         }
 
         public void RunCatalog(string url, List<CatalogItem> items)
@@ -68,7 +62,6 @@ namespace Client.UseCases.eShopDapr.Workers
                 Console.ReadKey();
             }
         }
-
 
         public void RunBasket(string url, List<string> basketIds, List<CatalogItem> catalogItems, int MIN_NUM_ITEMS, int MAX_NUM_ITEMS)
         {

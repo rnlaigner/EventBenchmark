@@ -45,6 +45,7 @@ namespace Client.RabbitMQ
             Console.WriteLine($"Application {UseCases.Constants.APPLICATION}");
             Console.WriteLine($"Type {UseCases.Constants.TYPE}");
             Console.WriteLine("Check that the application is rechable swagger endpoints. DB clean, rabbit queue.");
+            Console.WriteLine("press any key to contine the process...");
             Console.ReadKey();
 
         }
@@ -56,7 +57,7 @@ namespace Client.RabbitMQ
 
         private IModel setExchangeConfiguration() {
             IModel channel = connection.CreateModel();
-            //channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+            channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
         
             queueName = channel.QueueDeclare(exchangeName, false, false, false, null).QueueName;  //RabbitMQ assigns and sets a non durable queue.
 
@@ -88,12 +89,29 @@ namespace Client.RabbitMQ
                     channel.QueueBind(queueName, "ProductPriceChangedIntegrationEvent", "ProductPriceChangedIntegrationEvent");
                     channel.QueueBind(queueName, "ProductRemovedIntegrationEvent", "ProductRemovedIntegrationEvent");
                 }
+
+                //Basket
+                channel.QueueBind(queueName, "OrderStartedIntegrationEvent", "OrderStartedIntegrationEvent");
+
+                //Catalog
+                channel.QueueBind(queueName, "OrderStatusChangedToAwaitingValidationIntegrationEvent", "OrderStatusChangedToAwaitingValidationIntegrationEvent");
                 channel.QueueBind(queueName, "OrderStatusChangedToPaidIntegrationEvent", "OrderStatusChangedToPaidIntegrationEvent");
+
+                //Ordering
+                channel.QueueBind(queueName, "GracePeriodConfirmedIntegrationEvent", "GracePeriodConfirmedIntegrationEvent");
+                channel.QueueBind(queueName, "OrderPaymentFailedIntegrationEvent", "OrderPaymentFailedIntegrationEvent");
+                channel.QueueBind(queueName, "OrderPaymentSucceededIntegrationEvent", "OrderPaymentSucceededIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStockConfirmedIntegrationEvent", "OrderStockConfirmedIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStockRejectedIntegrationEvent", "OrderStockRejectedIntegrationEvent");
                 channel.QueueBind(queueName, "UserCheckoutAcceptedIntegrationEvent", "UserCheckoutAcceptedIntegrationEvent");
+
+                //Payment
+                channel.QueueBind(queueName, "OrderStatusChangedToStockConfirmedIntegrationEvent", "OrderStatusChangedToStockConfirmedIntegrationEvent");
             }
             
             
             Console.WriteLine($"[*] Queue {queueName} is bound and listening for messages.");
+            Console.WriteLine("press any key to contine the process...");
             Console.ReadKey();
             return channel;
         }

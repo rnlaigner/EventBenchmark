@@ -41,20 +41,27 @@ namespace Client.UseCases.eShopDapr
         }
         public void Init()
         {
+            Console.WriteLine($"Running scenario: {Scenario}");
             switch (Scenario)
             {
 
                 case Constants.REFERENTIAL_INTEGRITY:
                     {
-                        var items = 10;
-                        var customers = 10;
-                        var minItems = 10;
+                        var items = 100;
+                        var customers = 100;
+                        var minItems = 1;
                         var maxItems = 10;
-                        var minQuantityItems = 10;
+                        var minQuantityItems = 1;
                         var maxQuantityItems = 10;
+                        Console.WriteLine($"items: {items}");
+                        Console.WriteLine($"customers: {customers}");
+                        Console.WriteLine($"minItems: {minItems}");
+                        Console.WriteLine($"maxItems: {maxItems}");
+                        Console.WriteLine($"minQuantityItems: {minQuantityItems}");
+                        Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
                         List<int> transactions = new List<int>() { 10, 1, 1, 0 };
-                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
                 case Constants.NON_NEGATIVE_ENFORCEMENT:
@@ -66,9 +73,15 @@ namespace Client.UseCases.eShopDapr
                         var maxItems = 10;
                         var minQuantityItems = 1;
                         var maxQuantityItems = 1;
+                        Console.WriteLine($"items: {items}");
+                        Console.WriteLine($"customers: {customers}");
+                        Console.WriteLine($"minItems: {minItems}");
+                        Console.WriteLine($"maxItems: {maxItems}");
+                        Console.WriteLine($"minQuantityItems: {minQuantityItems}");
+                        Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 1, 0, 0, 0 };
-                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        List<int> transactions = new List<int>() { 100, 0, 0, 0 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
                 case Constants.EXACTLY_ONCE_PROCESSING:
@@ -76,29 +89,60 @@ namespace Client.UseCases.eShopDapr
                         // here need a specific case:
                         //    - a lot of same customer requests
                         //    - a normal execution where we see if the payment had multiple same processe
-                        var items = 10;
-                        var customers = 10;
-                        var minItems = 10;
+                        var items = 100;
+                        var customers = 50;
+                        var minItems = 1;
                         var maxItems = 10;
-                        var minQuantityItems = 10;
-                        var maxQuantityItems = 10;
+                        var minQuantityItems = 50;
+                        var maxQuantityItems = 200;
+                        Console.WriteLine($"items: {items}");
+                        Console.WriteLine($"customers: {customers}");
+                        Console.WriteLine($"minItems: {minItems}");
+                        Console.WriteLine($"maxItems: {maxItems}");
+                        Console.WriteLine($"minQuantityItems: {minQuantityItems}");
+                        Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 10, 0, 1, 1 };
-                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        List<int> transactions = new List<int>() { 100, 0, 1, 1 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
                         break;
                     }
                 case Constants.PERFORMANCE:
                     {
                         // workload need to be differnt
-                        var items = 400;
-                        var customers = 1000;
+                        var items = 500;
+                        var customers = 50;
                         var minItems = 1;
-                        var maxItems = 100;
-                        var minQuantityItems = 1;
-                        var maxQuantityItems = 1000;
+                        var maxItems = 15;
+                        var minQuantityItems = 1000;
+                        var maxQuantityItems = 10000;
+                        Console.WriteLine($"items: {items}");
+                        Console.WriteLine($"customers: {customers}");
+                        Console.WriteLine($"minItems: {minItems}");
+                        Console.WriteLine($"maxItems: {maxItems}");
+                        Console.WriteLine($"minQuantityItems: {minQuantityItems}");
+                        Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
                         // transaction checkout, delete, update, replenish
-                        List<int> transactions = new List<int>() { 10, 1, 2, 1 };
-                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        List<int> transactions = new List<int>() { 15, 0, 1, 4 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, false);
+                        break;
+                    }
+                case Constants.SIMPLE_SUCESS_FLOW:
+                    {
+                        var items = 100;
+                        var customers = 1;
+                        var minItems = 1;
+                        var maxItems = 10;
+                        var minQuantityItems = 1;
+                        var maxQuantityItems = 10;
+                        Console.WriteLine($"items: {items}");
+                        Console.WriteLine($"customers: {customers}");
+                        Console.WriteLine($"minItems: {minItems}");
+                        Console.WriteLine($"maxItems: {maxItems}");
+                        Console.WriteLine($"minQuantityItems: {minQuantityItems}");
+                        Console.WriteLine($"maxQuantityItems: {maxQuantityItems}");
+                        // transaction checkout, delete, update, replenish
+                        List<int> transactions = new List<int>() { 1, 0, 0, 0 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions, true);
                         break;
                     }
                 default:
@@ -107,7 +151,7 @@ namespace Client.UseCases.eShopDapr
             }
         }
 
-        private void runScenario(int NUM_TOTAL_ITEMS, int NUM_CUSTOMERS, int MIN_NUM_ITEMS, int MAX_NUM_ITEMS, int MIN_ITEM_QTY, int MAX_ITEM_QTY, List<int> TRANSACTIONS)
+        private void runScenario(int NUM_TOTAL_ITEMS, int NUM_CUSTOMERS, int MIN_NUM_ITEMS, int MAX_NUM_ITEMS, int MIN_ITEM_QTY, int MAX_ITEM_QTY, List<int> TRANSACTIONS, bool runOnce)
         {
             List<ApplicationUser> customers = DataGenerator.GenerateCustomers(NUM_CUSTOMERS);
             List<CatalogItem> items = DataGenerator.GenerateCatalogItems(NUM_TOTAL_ITEMS, MIN_ITEM_QTY, MAX_ITEM_QTY);
@@ -158,6 +202,7 @@ namespace Client.UseCases.eShopDapr
 
             // now that data is stored, we can start the transacions
             Console.WriteLine("Starting the transaction. Verify that the baskets and items are in place.");
+            Console.WriteLine("press any key to contine the process...");
             Console.ReadKey();
 
             Dictionary<string, IInput> inputs = new Dictionary<string, IInput>();
@@ -165,10 +210,11 @@ namespace Client.UseCases.eShopDapr
             inputs.Add(typeof(DeleteProduct).Name, deleteProductTransactionInput);
             inputs.Add(typeof(PriceUpdate).Name, priceUpdateTransactionInput);
             inputs.Add(typeof(StockReplenishment).Name, stockReplenishmentTransactionInput);
-            RunTransactions(inputs, TRANSACTIONS);
+
+            RunTransactions(inputs, TRANSACTIONS, runOnce);
         }
 
-        private void RunTransactions(Dictionary<string, IInput> inputs, List<int> transactionDistribution)
+        private void RunTransactions(Dictionary<string, IInput> inputs, List<int> transactionDistribution, bool runOnce)
         {
 
             Random random = new Random();
@@ -180,7 +226,7 @@ namespace Client.UseCases.eShopDapr
             int iterations = 0; // temporal during testing
             // keep added items to avoid repetition
             HashSet<int> basketsCheckout = new HashSet<int>();
-            
+
             while (!IsStopped())
             {
                 iterations++;
@@ -202,9 +248,9 @@ namespace Client.UseCases.eShopDapr
                             {
                                 basketsCheckout.Add(userId);
                             }
-                            else
-                            {
+                            else {
                                 Console.WriteLine($"Duplicate request, {userId}");
+                                //break;
                             }
                             var payload = new BasketCheckout()
                             {
@@ -221,7 +267,7 @@ namespace Client.UseCases.eShopDapr
                             };
 
                             var content = new StringContent(JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
-                            client.DefaultRequestHeaders.Add("X-Request-Id", input.BasketIds[userId]);
+                            client.DefaultRequestHeaders.Add("x-requestid", input.BasketIds[userId]);
 
                             // now checkout
                             Console.WriteLine();
@@ -311,12 +357,26 @@ namespace Client.UseCases.eShopDapr
                             break;
                         }
                 }
-
+                // used for the all other
                 if (iterations % 100 == 0)
                 {
                     var time = 1000;
                     Console.WriteLine($"Processing the requests, sleep for {time} ms");
                     Thread.Sleep(time);
+                }
+
+                // used for the last worflow
+                /*if (iterations % 50 == 0)
+                {
+                    // give time for the system to process all
+                    var time = 3000;
+                    Console.WriteLine($"Processing the requests, sleep for {time} ms");
+                    Thread.Sleep(time);
+                }*/
+                // for simple case to see the succesful work
+                if (runOnce)
+                {
+                    break;
                 }
             }
 

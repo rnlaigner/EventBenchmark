@@ -15,7 +15,7 @@ namespace Client
 
             // WHEN RUNNING CONTAINERS
             if (Constants.APPLICATION.Equals(Constants.CONTAINER)) {
-                EShopUseCase eShopUseCase = new EShopUseCase(new EShopDefaultConfig(), Constants.SIMPLE_SUCESS_FLOW);
+                EShopUseCase eShopUseCase = new EShopUseCase(new EShopDefaultConfig(), Constants.PERFORMANCE);
                 eShopUseCase.Init();
             }
             // WHEN RUNNING DAPR 

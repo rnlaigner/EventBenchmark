@@ -12,7 +12,7 @@ namespace Client.UseCases.eShop
         const string alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         const int OFFSET = 0; // temporal during testing to not reinitialize application always
 
-        public static List<CatalogItem> GenerateCatalogItems(int NumberOfItems)
+        public static List<CatalogItem> GenerateCatalogItems(int NumberOfItems, int MIN_ITEM_QTY, int MAX_ITEM_QTY)
         {
             List<CatalogItem> items = new List<CatalogItem>(NumberOfItems);
 
@@ -43,11 +43,10 @@ namespace Client.UseCases.eShop
                         Brand = RandomString(8, alphanumeric)
                     },
 
-                    AvailableStock = new Random().Next(Constants.MIN_STOCK_QTY, Constants.MAX_STOCK_QTY),
-                    RestockThreshold = Constants.MIN_STOCK_QTY,
-                    MaxStockThreshold = Constants.MAX_STOCK_QTY,
+                    AvailableStock = new Random().Next(MIN_ITEM_QTY, MAX_ITEM_QTY),
+                    RestockThreshold = MIN_ITEM_QTY,
+                    MaxStockThreshold = MAX_ITEM_QTY,
                     OnReorder = false
-
 
                 };
 
@@ -58,8 +57,9 @@ namespace Client.UseCases.eShop
             return items;
         }
 
-        public static List<BasketItem> GenerateBasketItems(int NumberOfItems)
+        private static List<BasketItem> GenerateBasketItems(int NumberOfItems)
         {
+            throw new Exception("Using GenerateBasketItems, not good as items are different than the catalog");
             List<BasketItem> items = new List<BasketItem>(NumberOfItems);
 
             for (int i = 0; i < NumberOfItems; i++)

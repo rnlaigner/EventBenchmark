@@ -8,30 +8,39 @@ namespace Client.UseCases.eShopDapr
     public class EShopDaprDefaultConfig : IUseCaseConfig
     {
 
-        private const string BASKET_IP = "localhost:5103";
-        private const string CATALOG_IP = "localhost:5101";
-        private const string ORDER_IP = "localhost:5102";
-
-
         public EShopDaprDefaultConfig() { }
 
         public List<string> GetTransactions()
         {
-            return new List<string> { typeof(Checkout).Name, typeof(DeleteProduct).Name, typeof(PriceUpdate).Name, typeof(StockReplenishment).Name };
+            //return new List<string> { typeof(Checkout).Name, typeof(StockReplenishment).Name, typeof(DeleteProduct).Name, typeof(PriceUpdate).Name};
+            throw new NotImplementedException();
         }
 
-        public List<string> GetDistributionOfTransactions()
+        public List<string> GetDistributionOfTransactions(List<int> transactionDistribution)
         {
+            if (transactionDistribution.Count != 4)
+            {
+                throw new Exception("Transaction distribution needs to have 4 values");
+            }
+            int checkout = transactionDistribution[0];
+            int delete = transactionDistribution[1];
+            int update = transactionDistribution[2];
+            int replenish = transactionDistribution[3];
+
+            int total = checkout + delete + update + replenish;
+            Console.WriteLine("Transactions:");
+            Console.WriteLine($"Checkout in {((double)checkout) / total} %");
+            Console.WriteLine($"Delete in {((double)delete) / total} %");
+            Console.WriteLine($"Update in {((double)update) / total} %");
+            Console.WriteLine($"Replenish in {((double)replenish) / total} %");
             List<string> list = new List<string>();
-            // list will have 10 elements and distribution will be as folowwing
-            // 10 % delete
-            // 10 % update
-            // 10 % stock replanishment
-            // 70 % checkout
-            list.Add(typeof(DeleteProduct).Name);
-            list.Add(typeof(PriceUpdate).Name);
-            list.Add(typeof(StockReplenishment).Name);
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < delete; i++)
+                list.Add(typeof(DeleteProduct).Name);
+            for (int i = 0; i < update; i++)
+                list.Add(typeof(PriceUpdate).Name);
+            for (int i = 0; i < replenish; i++)
+                list.Add(typeof(StockReplenishment).Name);
+            for (int i = 0; i < checkout; i++)
                 list.Add(typeof(Checkout).Name);
             return list;
 
@@ -39,27 +48,32 @@ namespace Client.UseCases.eShopDapr
 
         public List<int> GetPercentageOfTransactions()
         {
-            return new List<int> { 100, 0, 0 };
+            //return new List<int> { 100, 0, 0, 0 };
+            throw new NotImplementedException();
         }
 
         public TimeSpan? TimeLimit()
         {
-            return null;
+            //return null;
+            throw new NotImplementedException();
         }
 
         public List<int> GetNumberOfRequestsPerTransaction()
         {
-            return new List<int> { 0, 0, 0 };
+            //return new List<int> { 0, 0, 0, 0 };
+            throw new NotImplementedException();
         }
 
         public List<TimeSpan> GetPeriodBetweenRequestsOfSameTransaction()
         {
-            return new List<TimeSpan> { new TimeSpan(2000) };
+            //return new List<TimeSpan> { new TimeSpan(2000) };
+            throw new NotImplementedException();
         }
 
         public Distribution GetDistribution()
         {
-            return Distribution.NORMAL;
+            //return Distribution.NORMAL;
+            throw new NotImplementedException();
         }
 
         public Dictionary<string, string> GetUrlMap() {
@@ -67,19 +81,19 @@ namespace Client.UseCases.eShopDapr
 
             // Basket
             // POST
-            dictionary.Add("basket", "http://"+ BASKET_IP + "/api/v1/Basket");
+            dictionary.Add("basket", "http://"+ Constants.BASKET_IP + "/api/v1/Basket");
             // POST
-            dictionary.Add("checkout", "http://" + BASKET_IP + "/api/v1/Basket/checkout");
+            dictionary.Add("checkout", "http://" + Constants.BASKET_IP + "/api/v1/Basket/checkout");
             
             // Catalog
             // POST
-            dictionary.Add("catalog", "http://" + CATALOG_IP + "/api/v1/Catalog/items");
+            dictionary.Add("catalog", "http://" + Constants.CATALOG_IP + "/api/v1/Catalog/items");
             // DELETE
-            dictionary.Add("delete", "http://" + CATALOG_IP + "/api/v1/Catalog/");
+            dictionary.Add("delete", "http://" + Constants.CATALOG_IP + "/api/v1/Catalog/");
             // PUT
-            dictionary.Add("update", "http://" + CATALOG_IP + "/api/v1/Catalog/items");
+            dictionary.Add("update", "http://" + Constants.CATALOG_IP + "/api/v1/Catalog/items");
             // PUT
-            dictionary.Add("replenishment", "http://" + CATALOG_IP + "/api/v1/Catalog/addStocks");
+            dictionary.Add("replenishment", "http://" + Constants.CATALOG_IP + "/api/v1/Catalog/addStocks");
 
 
             // Order

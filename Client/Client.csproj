@@ -34,11 +34,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\GrainInterfaces\GrainInterfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RabbitMQ\" />
     <Folder Include="UseCases\eShop\Transactions\" />
     <Folder Include="Configuration\" />
     <Folder Include="UseCases\eShop\Data\" />

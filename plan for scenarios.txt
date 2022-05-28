@@ -1,0 +1,44 @@
+//scenarios
+        /*
+         1 - referential integrity
+           100 items of 100 at least stock
+           random basket but all get to 10% of the 100 so we wont have use of stock
+           delete items which not used - to showcase no effect on the workflow
+           delete the populat items - here we can see if refenretial and how affects the case
+           checkouts a lot of them (to baskets need to be 10x of items)
+           everytime different request id (not testing the idempotency
+           trace:
+           database state before the start of everything
+           so after items added and the basket export to have
+           for comparison maybe do the implementation thing of json and requests 
+           as you want to compare so best on same workload
+           trace the checkout, price update, delete, validation, order paid, stock removal events
+                  if delete not implemented it will cause failers
+           when testing try to see both debug and none to have image of what will be the outcome when aks
+
+         2 - non negative
+           a smaller items and a lot of baskets to be send
+           again customer need to be requst id new
+           baskets all items below stock, but then some above
+           similar story for all
+           track transactions, events
+           here actor state would be nice but hardly possible maybe at end before exit the case send request to actors for each id to recheck soft state
+
+         3 - idempotency first go with customers that have request diffrent and see if order makes in payment two events
+             so queue track payments
+             
+
+         4 - real worload, a bunch of thigns to test
+             a large scope so chose some
+
+             with queue and all you can track times and latencies
+             throghput the number of event you sent and are succsfuk (naimly from checkout)
+             
+             keep same workload
+             test for different item/basket/ checkout numbers 
+             
+
+              zipfin and unform distribution not sure in waht way they help
+              scnarios defined outside in the values then based on choise start it
+              always do cleanup of db maybe event see that benchmark driver does this
+              in ideal case benchmark driver would track all the data and then give some aggregation of it

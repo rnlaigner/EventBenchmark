@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Client.Configuration;
 using Client.Infra;
 using Client.UseCases.eShopDapr.TransactionInput;
 using Client.UseCases.eShopDapr.Transactions;
 using Client.UseCases.eShopDapr.Workers;
 using Common.Entities.eShopDapr;
-using Common.YCSB;
+using Common.Http;
 
 /**
  * 
-     1- define the use case OK
+     1 - select the scenario of the execution
 
-     2 - define the transactions and respective percentage   OK
+     2 - each scenario has specific atributes
+     
+     3 - initial the run of scenario
 
-     3 - define the distribution of each transaction    OK
+     4 - insert items, customers, baskets
 
-     4 - setup data generation   OK
+     5 - run transactions based on scenario distribution
 
-     5 - setup workers to submit requests   OK
-
-     6 - setup event listeners (rabbit mq) given the config
+     6 - run timer/manually
  * 
  */
 namespace Client.UseCases.eShopDapr
@@ -32,33 +32,93 @@ namespace Client.UseCases.eShopDapr
     {
 
         private readonly IUseCaseConfig Config;
+        private readonly string Scenario;
 
-        public EShopDaprUseCase(IUseCaseConfig Config) : base()
+        public EShopDaprUseCase(IUseCaseConfig Config, string Scenario) : base()
         {
             this.Config = Config;
+            this.Scenario = Scenario;
         }
-
-        // the constructor are expected to be the same..
-        // but creating so many classes is not good, i believe i should model as tasks....
-        // FIXME https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/task-based-asynchronous-programming
-        // automatic thread pool control
-
-        // orleans can used as reliable metadatada and configuration storage, as well as programming abstraction run...
-        // some tasks are better off orleans?
-
         public void Init()
         {
+            switch (Scenario)
+            {
 
-            List<ApplicationUser> customers =  DataGenerator.GenerateCustomers(Constants.CUST_PER_DIST);
-            List<CatalogItem> items = DataGenerator.GenerateCatalogItems(Constants.NUM_TOTAL_ITEMS);
-            List<string> customeBaskets = DataGenerator.GenerateGuids(Constants.CUST_PER_DIST);
+                case Constants.REFERENTIAL_INTEGRITY:
+                    {
+                        var items = 10;
+                        var customers = 10;
+                        var minItems = 10;
+                        var maxItems = 10;
+                        var minQuantityItems = 10;
+                        var maxQuantityItems = 10;
+                        // transaction checkout, delete, update, replenish
+                        List<int> transactions = new List<int>() { 10, 1, 1, 0 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        break;
+                    }
+                case Constants.NON_NEGATIVE_ENFORCEMENT:
+                    {
+                        // many customers, with items that have low stock so they will get removed
+                        var items = 10;
+                        var customers = 100;
+                        var minItems = 10;
+                        var maxItems = 10;
+                        var minQuantityItems = 1;
+                        var maxQuantityItems = 1;
+                        // transaction checkout, delete, update, replenish
+                        List<int> transactions = new List<int>() { 1, 0, 0, 0 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        break;
+                    }
+                case Constants.EXACTLY_ONCE_PROCESSING:
+                    {
+                        // here need a specific case:
+                        //    - a lot of same customer requests
+                        //    - a normal execution where we see if the payment had multiple same processe
+                        var items = 10;
+                        var customers = 10;
+                        var minItems = 10;
+                        var maxItems = 10;
+                        var minQuantityItems = 10;
+                        var maxQuantityItems = 10;
+                        // transaction checkout, delete, update, replenish
+                        List<int> transactions = new List<int>() { 10, 0, 1, 1 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        break;
+                    }
+                case Constants.PERFORMANCE:
+                    {
+                        // workload need to be differnt
+                        var items = 400;
+                        var customers = 1000;
+                        var minItems = 1;
+                        var maxItems = 100;
+                        var minQuantityItems = 1;
+                        var maxQuantityItems = 1000;
+                        // transaction checkout, delete, update, replenish
+                        List<int> transactions = new List<int>() { 10, 1, 2, 1 };
+                        runScenario(items, customers, minItems, maxItems, minQuantityItems, maxQuantityItems, transactions);
+                        break;
+                    }
+                default:
+                    Console.WriteLine("NO SCENARIO CHOSEN");
+                    break;
+            }
+        }
+
+        private void runScenario(int NUM_TOTAL_ITEMS, int NUM_CUSTOMERS, int MIN_NUM_ITEMS, int MAX_NUM_ITEMS, int MIN_ITEM_QTY, int MAX_ITEM_QTY, List<int> TRANSACTIONS)
+        {
+            List<ApplicationUser> customers = DataGenerator.GenerateCustomers(NUM_CUSTOMERS);
+            List<CatalogItem> items = DataGenerator.GenerateCatalogItems(NUM_TOTAL_ITEMS, MIN_ITEM_QTY, MAX_ITEM_QTY);
+            List<string> customeBaskets = DataGenerator.GenerateGuids(NUM_CUSTOMERS);
 
             CheckoutTransactionInput checkoutTransactionInput = new CheckoutTransactionInput
             {
-                MinNumItems = Constants.MIN_NUM_ITEMS,
-                MaxNumItems = Constants.MAX_NUM_ITEMS,
-                MinItemQty = Constants.MIN_ITEM_QTY,
-                MaxItemQty = Constants.MAX_ITEM_QTY,
+                MinNumItems = MIN_NUM_ITEMS,
+                MaxNumItems = MAX_NUM_ITEMS,
+                MinItemQty = MIN_ITEM_QTY,
+                MaxItemQty = MAX_ITEM_QTY,
                 CartUrl = Config.GetUrlMap()["checkout"],
                 Users = customers,
                 BasketIds = customeBaskets
@@ -66,89 +126,86 @@ namespace Client.UseCases.eShopDapr
 
             DeleteProductTransactionInput deleteProductTransactionInput = new DeleteProductTransactionInput
             {
-                NumTotalItems = Constants.NUM_TOTAL_ITEMS,
+                NumTotalItems = NUM_TOTAL_ITEMS,
                 CatalogUrl = Config.GetUrlMap()["delete"],
                 Items = items
             };
 
             PriceUpdateTransactionInput priceUpdateTransactionInput = new PriceUpdateTransactionInput
             {
-                NumTotalItems = Constants.NUM_TOTAL_ITEMS,
+                NumTotalItems = NUM_TOTAL_ITEMS,
                 CatalogUrl = Config.GetUrlMap()["update"],
                 Items = items
             };
 
             StockReplenishmentTransactionInput stockReplenishmentTransactionInput = new StockReplenishmentTransactionInput
             {
-                NumTotalItems = Constants.NUM_TOTAL_ITEMS,
+                NumTotalItems = NUM_TOTAL_ITEMS,
                 CatalogUrl = Config.GetUrlMap()["replenishment"],
                 Items = items
             };
 
+            HttpRequest httpRequest = new HttpRequest();
 
-            HttpClient httpClient = new HttpClient();
-
-            DataIngestor dataIngestor = new DataIngestor(httpClient);
+            DataIngestor dataIngestor = new DataIngestor(httpRequest);
 
             // blocking call
             dataIngestor.RunCatalog(Config.GetUrlMap()["catalog"], items);
-            dataIngestor.RunBasket(Config.GetUrlMap()["basket"], customeBaskets, items);
+            dataIngestor.RunBasket(Config.GetUrlMap()["basket"], customeBaskets, items, MIN_NUM_ITEMS, MAX_NUM_ITEMS);
 
             // TODO setup event listeners before submitting the transactions
-
-
             // TODO create payment provider, a grain that will randomly accept or deny payments
 
-
             // now that data is stored, we can start the transacions
+            Console.WriteLine("Starting the transaction. Verify that the baskets and items are in place.");
+            Console.ReadKey();
+
             Dictionary<string, IInput> inputs = new Dictionary<string, IInput>();
             inputs.Add(typeof(Checkout).Name, checkoutTransactionInput);
             inputs.Add(typeof(DeleteProduct).Name, deleteProductTransactionInput);
             inputs.Add(typeof(PriceUpdate).Name, priceUpdateTransactionInput);
             inputs.Add(typeof(StockReplenishment).Name, stockReplenishmentTransactionInput);
-            RunTransactions(inputs);
-
+            RunTransactions(inputs, TRANSACTIONS);
         }
 
-        /**
-         * TODO possibly use the holistic task scheduler
-         * 
-         */
-        private void RunTransactions(Dictionary<string, IInput> inputs)
+        private void RunTransactions(Dictionary<string, IInput> inputs, List<int> transactionDistribution)
         {
 
             Random random = new Random();
-            //HttpClient client = new HttpClient();
 
-            //int userCount = 0;
-
-            int n = Config.GetTransactions().Count;
+            var transactions = Config.GetDistributionOfTransactions(transactionDistribution);
+            int n = transactions.Count;
 
             // build and run all transaction tasks
-
+            int iterations = 0; // temporal during testing
+            // keep added items to avoid repetition
+            HashSet<int> basketsCheckout = new HashSet<int>();
+            
             while (!IsStopped())
             {
-
-                int k = random.Next(0, n-1);
-                Console.WriteLine($"Random number k: {k}");
-                switch (Config.GetTransactions()[k])
+                iterations++;
+                int k = random.Next(0, n - 1);
+                Console.WriteLine($"Round: {iterations}");
+                switch (transactions[k])
                 {
 
                     case "Checkout":
                         {
-
-                            NumberGenerator numberGenerator = GetDistribution();
-
                             // define number of items in the cart
-                            CheckoutTransactionInput input = (CheckoutTransactionInput) inputs[typeof(Checkout).Name];
+                            CheckoutTransactionInput input = (CheckoutTransactionInput)inputs[typeof(Checkout).Name];
                             long numberItems = random.Next(input.MinNumItems, input.MaxNumItems);
 
-                            // keep added items to avoid repetition
-                            Dictionary<int, string> usedItemIds = new Dictionary<int, string>();
-                            
                             HttpClient client = new HttpClient();
                             Checkout checkout = new Checkout(client, input);
                             var userId = new Random().Next(input.Users.Count);
+                            if (!basketsCheckout.Contains(userId))
+                            {
+                                basketsCheckout.Add(userId);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Duplicate request, {userId}");
+                            }
                             var payload = new BasketCheckout()
                             {
                                 City = input.Users[userId].City,
@@ -173,9 +230,21 @@ namespace Client.UseCases.eShopDapr
                             Console.WriteLine(client.DefaultRequestHeaders);
                             Console.WriteLine();
                             Task t = Task.Run(() => client.PostAsync(input.CartUrl, content));
-                            
+                            try
+                            {
+                                t.Wait();
+                            }
+                            catch (AggregateException ae)
+                            {
+                                foreach (var ex in ae.InnerExceptions)
+                                {
+                                    Console.WriteLine("ERROR");
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
                             // add to concurrent queue and check if error is too many requests, if so, send again later
                             //   this is to maintain the distribution
+                            // tracking by error message - no retries
 
                             break;
                         }
@@ -184,7 +253,6 @@ namespace Client.UseCases.eShopDapr
                         {
                             HttpClient client = new HttpClient();
                             DeleteProductTransactionInput input = (DeleteProductTransactionInput)inputs[typeof(DeleteProduct).Name];
-                            DeleteProduct deleteProduct = new DeleteProduct(GetDistribution(), input);
 
                             int id = input.Items[new Random().Next(input.Items.Count)].Id;
 
@@ -202,7 +270,6 @@ namespace Client.UseCases.eShopDapr
                         {
                             HttpClient client = new HttpClient();
                             PriceUpdateTransactionInput input = (PriceUpdateTransactionInput)inputs[typeof(PriceUpdate).Name];
-                            PriceUpdate priceUpdate = new PriceUpdate(GetDistribution(), input);
 
                             CatalogItem payload = input.Items[new Random().Next(input.Items.Count)];
                             payload.Price = (decimal)(new Random().NextDouble() * 100);
@@ -223,7 +290,6 @@ namespace Client.UseCases.eShopDapr
                         {
                             HttpClient client = new HttpClient();
                             StockReplenishmentTransactionInput input = (StockReplenishmentTransactionInput)inputs[typeof(StockReplenishment).Name];
-                            StockReplenishment stockReplenishment = new StockReplenishment();
 
                             CatalogItem item = input.Items[new Random().Next(input.Items.Count)];
 
@@ -233,7 +299,6 @@ namespace Client.UseCases.eShopDapr
                                 StockToAdd = (int)(new Random().NextDouble() * 100)
                             };
                             
-
                             // now update stock
                             Console.WriteLine();
                             Console.WriteLine("STOCK");
@@ -245,23 +310,25 @@ namespace Client.UseCases.eShopDapr
 
                             break;
                         }
-
                 }
 
-
+                if (iterations % 100 == 0)
+                {
+                    var time = 1000;
+                    Console.WriteLine($"Processing the requests, sleep for {time} ms");
+                    Thread.Sleep(time);
+                }
             }
 
         }
-
-        private NumberGenerator GetDistribution()
+        // NOT USED
+        /*private NumberGenerator GetDistribution(int NUM_TOTAL_ITEMS)
         {
             if( Config.GetDistribution() == Distribution.NORMAL)
             {
-                return new UniformLongGenerator(1,Constants.NUM_TOTAL_ITEMS);
+                return new UniformLongGenerator(1,NUM_TOTAL_ITEMS);
             }
-
-            return new ZipfianGenerator(Constants.NUM_TOTAL_ITEMS);
-        }
-
+            return new ZipfianGenerator(NUM_TOTAL_ITEMS);
+        }*/
     }
 }

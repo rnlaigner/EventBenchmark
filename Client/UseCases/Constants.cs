@@ -4,25 +4,32 @@ namespace Client.UseCases
     public static class Constants
     {
 
-        // every cart/basket must have at least 5 items?
-        public const int MIN_NUM_ITEMS = 1;
-        public const int MAX_NUM_ITEMS = 15;
+        // application to benchmark and its type
+        public const string APPLICATION = CONTAINER;
+        public const string TYPE = BASE;
 
-        // every item in the cart must have at least 1 quantity
-        public const int MIN_ITEM_QTY = 1;
-        public const int MAX_ITEM_QTY = 10;
+        // setup of constants for easier chekup
+        public const string CONTAINER = "CONTAINER";
+        public const string DAPR = "DAPR";
 
-        public const int NUM_TOTAL_ITEMS = 100; // 100000;
+        public const string ENFORCED = "ENFORCED";
+        public const string BASE = "BASE";
 
-        public const int DIST_PER_WARE = 10;
-        public const int CUST_PER_DIST = 30; //3000;
-        public const int ORD_PER_DIST = 30;//3000;
+        // IP addresses
+        public const string BASKET_IP = "localhost:5103";
+        public const string CATALOG_IP = "localhost:5101";
+        public const string ORDER_IP = "localhost:5102";
 
-        public const int DEFAULT_NUM_WARE = 1; //8;
+        // addresses of the endpoint to open
+        //public const string RABBITMQ_ADDRESS = "http://localhost:15672/#/queues";
+        //public const string SWAGGER = "http://localhost:5101/swagger/index.html";
 
-        // every product in stock must have at least 10 available items
-        public const int MIN_STOCK_QTY = 10;
-        public const int MAX_STOCK_QTY = 1000;
+        // Scenarios
+        public const string REFERENTIAL_INTEGRITY = "REFERENTIAL_INTEGRITY";
+        public const string NON_NEGATIVE_ENFORCEMENT = "NON_NEGATIVE_ENFORCEMENT";
+        public const string EXACTLY_ONCE_PROCESSING = "EXACTLY_ONCE_PROCESSING";
+        public const string PERFORMANCE = "PERFORMANCE";
+        public const string SIMPLE_SUCESS_FLOW = "SIMPLE_SUCESS_FLOW";
 
     }
 }

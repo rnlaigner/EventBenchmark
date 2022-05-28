@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Common.Http
 {
@@ -8,11 +11,16 @@ namespace Common.Http
         // unique identifier
         public int requestId;
 
-        public string url { get; set; }
+        public async Task<string> GetResponseStatus(string BaseUri, HttpContent payload)
+        {
+            var httpClient = new HttpClient();
 
-        public Dictionary<string, string> payload { get; set; }
-
-        public List<KeyValuePair<string, string>> headers;
+            var response = await httpClient.PostAsync(new Uri(BaseUri), payload);
+            if (response.IsSuccessStatusCode)
+                return "Success";
+            else
+                return "Fail";
+        }
 
     }
 }

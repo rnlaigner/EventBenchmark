@@ -14,6 +14,5 @@
   <ItemGroup>
     <Folder Include="YCSB\" />
     <Folder Include="Http\" />
-    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

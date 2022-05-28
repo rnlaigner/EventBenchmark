@@ -13,7 +13,7 @@ namespace Client.UseCases
          * Each entry represents a tranasction
          * Example: 3 entries, if one transaction for each entry, then each has 33% chance of being selected in a random selection
          */
-        List<string> GetDistributionOfTransactions();
+        List<string> GetDistributionOfTransactions(List<int> transactionDistribution);
 
         List<TimeSpan> GetPeriodBetweenRequestsOfSameTransaction();
 
@@ -24,8 +24,6 @@ namespace Client.UseCases
         Distribution GetDistribution();
 
         Dictionary<string, string> GetUrlMap();
-
-        // 
 
     }
 }

@@ -109,7 +109,7 @@ namespace Client.UseCases.eShopDapr
                 case Constants.PERFORMANCE:
                     {
                         // workload need to be differnt
-                        var items = 500;
+                        var items = 400;
                         var customers = 50;
                         var minItems = 1;
                         var maxItems = 15;

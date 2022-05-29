@@ -90,23 +90,18 @@ namespace Client.RabbitMQ
                     channel.QueueBind(queueName, "ProductRemovedIntegrationEvent", "ProductRemovedIntegrationEvent");
                 }
 
-                //Basket
-                channel.QueueBind(queueName, "OrderStartedIntegrationEvent", "OrderStartedIntegrationEvent");
-
-                //Catalog
-                channel.QueueBind(queueName, "OrderStatusChangedToAwaitingValidationIntegrationEvent", "OrderStatusChangedToAwaitingValidationIntegrationEvent");
-                channel.QueueBind(queueName, "OrderStatusChangedToPaidIntegrationEvent", "OrderStatusChangedToPaidIntegrationEvent");
-
-                //Ordering
-                channel.QueueBind(queueName, "GracePeriodConfirmedIntegrationEvent", "GracePeriodConfirmedIntegrationEvent");
                 channel.QueueBind(queueName, "OrderPaymentFailedIntegrationEvent", "OrderPaymentFailedIntegrationEvent");
                 channel.QueueBind(queueName, "OrderPaymentSucceededIntegrationEvent", "OrderPaymentSucceededIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToAwaitingStockValidationIntegrationEvent", "OrderStatusChangedToAwaitingStockValidationIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToCancelledIntegrationEvent", "OrderStatusChangedToCancelledIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToPaidIntegrationEvent", "OrderStatusChangedToPaidIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToShippedIntegrationEvent", "OrderStatusChangedToShippedIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToSubmittedIntegrationEvent", "OrderStatusChangedToSubmittedIntegrationEvent");
+                channel.QueueBind(queueName, "OrderStatusChangedToValidatedIntegrationEvent", "OrderStatusChangedToValidatedIntegrationEvent");
                 channel.QueueBind(queueName, "OrderStockConfirmedIntegrationEvent", "OrderStockConfirmedIntegrationEvent");
                 channel.QueueBind(queueName, "OrderStockRejectedIntegrationEvent", "OrderStockRejectedIntegrationEvent");
                 channel.QueueBind(queueName, "UserCheckoutAcceptedIntegrationEvent", "UserCheckoutAcceptedIntegrationEvent");
 
-                //Payment
-                channel.QueueBind(queueName, "OrderStatusChangedToStockConfirmedIntegrationEvent", "OrderStatusChangedToStockConfirmedIntegrationEvent");
             }
             
             

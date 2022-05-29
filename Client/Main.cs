@@ -20,7 +20,7 @@ namespace Client
             }
             // WHEN RUNNING DAPR 
             else if (Constants.APPLICATION.Equals(Constants.DAPR)) {
-                EShopDaprUseCase eShopDaprUseCase = new EShopDaprUseCase(new EShopDaprDefaultConfig(), Constants.SIMPLE_SUCESS_FLOW);
+                EShopDaprUseCase eShopDaprUseCase = new EShopDaprUseCase(new EShopDaprDefaultConfig(), Constants.EXACTLY_ONCE_PROCESSING);
                 eShopDaprUseCase.Init();
             } else {
                 Console.WriteLine("No setup selected");

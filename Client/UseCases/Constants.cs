@@ -5,7 +5,7 @@ namespace Client.UseCases
     {
 
         // application to benchmark and its type
-        public const string APPLICATION = CONTAINER;
+        public const string APPLICATION = DAPR;
         public const string TYPE = BASE;
 
         // setup of constants for easier chekup

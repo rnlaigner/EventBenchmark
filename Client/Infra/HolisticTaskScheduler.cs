@@ -34,7 +34,7 @@ namespace Client.Infra
 
 
         // The maximum concurrency level allowed by this scheduler.
-        private int _currentDegreeOfParallelism;
+        // private int _currentDegreeOfParallelism;
 
         // Indicates whether the scheduler is currently processing work items.
         private int _delegatesQueuedOrRunning = 0;

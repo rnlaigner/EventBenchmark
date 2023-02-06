@@ -7,7 +7,7 @@ namespace Client.Configuration
     public class Configuration
     {
 
-        Dictionary<string, QueueToActorEntry> queueToActorMap;
+        // Dictionary<string, QueueToActorEntry> queueToActorMap;
 
 
 
